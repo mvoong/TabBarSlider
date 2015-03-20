@@ -1,0 +1,17 @@
+PODS:
+  - MVTabBarSlider (0.1.0):
+    - PureLayout
+  - PureLayout (2.0.5)
+
+DEPENDENCIES:
+  - MVTabBarSlider (from `TabBarSlider`)
+
+EXTERNAL SOURCES:
+  MVTabBarSlider:
+    :path: TabBarSlider
+
+SPEC CHECKSUMS:
+  MVTabBarSlider: bf76a4ed19c3db4173b953ff0f829ff8f49622d7
+  PureLayout: 63a3257320223e8edddcd3afb407445f85a6bf74
+
+COCOAPODS: 0.36.0
