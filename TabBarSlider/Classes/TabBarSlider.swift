@@ -64,7 +64,7 @@ public class TabBarSlider: UIView {
     public var dataSource: TabBarSliderDataSource?
     public var delegate: TabBarSliderDelegate?
     public typealias UpdateOperations = Void -> Void
-    let scrollView = UIScrollView()
+    let scrollView = TabBarScrollView()
     var indicatorView: UIView?
     var indicatorConstraints = [NSLayoutConstraint]()
     var controls = [WrapperControl]()
@@ -108,7 +108,7 @@ public class TabBarSlider: UIView {
             let itemCount = dataSource.tabBarSliderNumberOfItems(self)
             for index in 0..<itemCount {
                 let control = dataSource.tabBarSlider(self, controlForItem: index)
-                
+
                 let wrapper = WrapperControl(view: control)
                 wrapper.addSubview(control)
                 wrapper.addTarget(self, action: "pressControl:", forControlEvents: UIControlEvents.TouchUpInside)
@@ -177,8 +177,7 @@ extension TabBarSlider {
             if (moveToNaturalScrollPosition) {
                 self.scrollView.contentOffset = CGPointMake(self.targetOffsetForItem(index), 0)
             }
-            self.updateIndicatorConstraints()
-            self.layoutIfNeeded()
+            self.layoutIndicatorView()
         }
         
         if animated {
@@ -196,29 +195,22 @@ extension TabBarSlider {
         }
     }
     
-    func updateIndicatorConstraints() {
+    func layoutIndicatorView() {
         if let selectedIndex = selectedIndex {
             let control = controls[selectedIndex]
             
             if let delegate = delegate {
                 if indicatorView == nil && delegate.respondsToSelector("tabBarSliderIndicatorView:") {
                     indicatorView = delegate.tabBarSliderIndicatorView(self)
-                    indicatorView?.setTranslatesAutoresizingMaskIntoConstraints(false)
                 }
             }
             
             if let indicatorView = indicatorView {
                 if indicatorView.superview == nil {
-                    addSubview(indicatorView)
+                    scrollView.addSubview(indicatorView)
                 }
 
-                removeConstraints(indicatorConstraints)
-                indicatorConstraints.removeAll(keepCapacity: true)
-                
-                indicatorConstraints.append(indicatorView.autoPinEdge(.Top, toEdge: .Top, ofView: control))
-                indicatorConstraints.append(indicatorView.autoPinEdge(.Left, toEdge: .Left, ofView: control))
-                indicatorConstraints.append(indicatorView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: control))
-                indicatorConstraints.append(indicatorView.autoPinEdge(.Right, toEdge: .Right, ofView: control))
+                indicatorView.frame = control.frame
             }
         }
     }
@@ -286,5 +278,12 @@ extension TabBarSlider {
         let scrollableWidth = scrollView.contentSize.width - bounds.width
         
         return offsetRatio * scrollableWidth
+    }
+}
+
+class TabBarScrollView: UIScrollView
+{
+    override func touchesShouldCancelInContentView(view: UIView!) -> Bool {
+        return true
     }
 }
