@@ -24,8 +24,8 @@
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="normal" translatesAutoresizingMaskIntoConstraints="NO" id="bhJ-vs-FM6" userLabel="Background">
                                 <rect key="frame" x="0.0" y="0.0" width="64" height="55"/>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uPv-4x-lZV">
-                                <rect key="frame" x="0.0" y="30" width="64" height="20"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.80000000000000004" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uPv-4x-lZV">
+                                <rect key="frame" x="4" y="30" width="56" height="20"/>
                                 <fontDescription key="fontDescription" name="Avenir-Light" family="Avenir" pointSize="14"/>
                                 <color key="textColor" red="0.90588235289999997" green="0.46274509800000002" blue="0.45098039220000002" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
@@ -40,14 +40,14 @@
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="R8P-9s-h67" secondAttribute="trailing" id="2rr-c8-Ho4"/>
-                            <constraint firstItem="uPv-4x-lZV" firstAttribute="leading" secondItem="Tba-2N-ypm" secondAttribute="leading" id="5YW-9y-WR1"/>
+                            <constraint firstItem="uPv-4x-lZV" firstAttribute="leading" secondItem="Tba-2N-ypm" secondAttribute="leading" constant="4" id="5YW-9y-WR1"/>
                             <constraint firstItem="R8P-9s-h67" firstAttribute="leading" secondItem="Tba-2N-ypm" secondAttribute="leading" id="FIL-jQ-tTV"/>
                             <constraint firstAttribute="bottom" secondItem="uPv-4x-lZV" secondAttribute="bottom" constant="5" id="KrP-Iq-Zwj"/>
                             <constraint firstAttribute="trailing" secondItem="bhJ-vs-FM6" secondAttribute="trailing" id="cOH-mt-ljO"/>
                             <constraint firstItem="bhJ-vs-FM6" firstAttribute="top" secondItem="Tba-2N-ypm" secondAttribute="top" id="gBi-NP-OM8"/>
                             <constraint firstAttribute="bottom" secondItem="bhJ-vs-FM6" secondAttribute="bottom" id="nqM-0k-vI7"/>
                             <constraint firstItem="bhJ-vs-FM6" firstAttribute="leading" secondItem="Tba-2N-ypm" secondAttribute="leading" id="pot-rk-NA9"/>
-                            <constraint firstAttribute="trailing" secondItem="uPv-4x-lZV" secondAttribute="trailing" id="xX1-DO-1Ah"/>
+                            <constraint firstAttribute="trailing" secondItem="uPv-4x-lZV" secondAttribute="trailing" constant="4" id="xX1-DO-1Ah"/>
                             <constraint firstItem="R8P-9s-h67" firstAttribute="top" secondItem="Tba-2N-ypm" secondAttribute="top" constant="5" id="zLe-Mb-qsJ"/>
                         </constraints>
                     </view>

@@ -20,14 +20,26 @@ public protocol TabBarSliderDataSource {
 }
 
 public class TabBarSlider: UIView {
+    public typealias UpdateOperations = Void -> Void
+    
     public var dataSource: TabBarSliderDataSource?
     public var delegate: TabBarSliderDelegate?
-    public typealias UpdateOperations = Void -> Void
     public var cellNib: UINib? {
         didSet {
             collectionView.registerNib(cellNib, forCellWithReuseIdentifier: "Cell")
         }
     }
+    public var itemWidth: CGFloat = 64 {
+        didSet {
+            if itemWidth != oldValue {
+                collectionView.performBatchUpdates(nil, completion: nil)
+                if selectedIndex != nil {
+                    setActiveIndex(selectedIndex!, animated: false, moveToNaturalScrollPosition: true, wobble: false)
+                }
+            }
+        }
+    }
+    
     let collectionView = UICollectionView(frame: CGRectZero, collectionViewLayout: UICollectionViewFlowLayout())
     var indicatorView: UIView?
     var indicatorConstraints = [NSLayoutConstraint]()
@@ -40,6 +52,15 @@ public class TabBarSlider: UIView {
     public required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
+        sharedInit()
+    }
+    
+    public required override init(frame: CGRect) {
+        super.init(frame: frame)
+        sharedInit()
+    }
+    
+    func sharedInit() {
         collectionView.backgroundColor = UIColor.clearColor()
         (collectionView.collectionViewLayout as UICollectionViewFlowLayout).scrollDirection = .Horizontal
         collectionView.setTranslatesAutoresizingMaskIntoConstraints(true)
@@ -168,14 +189,6 @@ extension TabBarSlider: UICollectionViewDelegate, UICollectionViewDataSource {
             }
         }
     }
-    
-    func nearestIndexTo(index: Int) -> Int? {
-        let numberOfItems = collectionView.numberOfItemsInSection(0)
-        if numberOfItems == 0 {
-            return nil
-        }
-        return max(0, min(numberOfItems - 1, index))
-    }
 }
 
 extension TabBarSlider: UICollectionViewDelegateFlowLayout {
@@ -188,7 +201,7 @@ extension TabBarSlider: UICollectionViewDelegateFlowLayout {
     }
     
     public func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        return CGSizeMake(64, collectionView.frame.height)
+        return CGSizeMake(itemWidth, collectionView.frame.height)
     }
 }
 
@@ -231,11 +244,13 @@ extension TabBarSlider {
             }
             
             if let indicatorView = indicatorView {
+                println("Selected: \(selectedIndex)")
                 if indicatorView.superview == nil {
                     collectionView.addSubview(indicatorView)
                 }
                 let selectedCellFrame = collectionView.collectionViewLayout.layoutAttributesForItemAtIndexPath(NSIndexPath(forItem: selectedIndex, inSection: 0)).frame
                 indicatorView.frame = selectedCellFrame
+                println("Frame: \(selectedCellFrame)")
             }
         }
     }
@@ -302,7 +317,10 @@ extension TabBarSlider {
     func targetOffsetForItem(index: Int) -> CGFloat {
         let frame = collectionView.collectionViewLayout.layoutAttributesForItemAtIndexPath(NSIndexPath(forItem: index, inSection: 0)).frame
         let offsetRatio = frame.minX / (collectionView.contentSize.width - frame.width)
-        let scrollableWidth = collectionView.contentSize.width - bounds.width
+        var scrollableWidth = collectionView.contentSize.width - bounds.width
+        
+        // Handle case where all buttons fit without scrolling
+        scrollableWidth = max(0, scrollableWidth)
         
         return offsetRatio * scrollableWidth
     }

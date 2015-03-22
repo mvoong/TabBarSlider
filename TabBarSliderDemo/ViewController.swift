@@ -33,6 +33,8 @@ class ViewController: UIViewController {
     ]
     
     @IBOutlet weak var slider: TabBarSlider!
+    @IBOutlet weak var slider2: TabBarSlider!
+    @IBOutlet weak var slider3: TabBarSlider!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,12 +42,17 @@ class ViewController: UIViewController {
         slider.cellNib = UINib(nibName: "ExampleControl", bundle: nil)
         slider.delegate = self
         slider.dataSource = self
-        slider.selectItem(0)
-        delay(1) {
-            self.slider.selectItem(3, animated: true)
-            self.delay(1) {
-                self.slider.selectItem(0, animated: true)
-            }
+        
+        slider2.cellNib = UINib(nibName: "ExampleControl", bundle: nil)
+        slider2.delegate = self
+        slider2.dataSource = self
+        
+        slider3.cellNib = UINib(nibName: "ExampleControl", bundle: nil)
+        slider3.delegate = self
+        slider3.dataSource = self
+        
+        delay(2) {
+            self.slider.itemWidth = 40
         }
     }
     
