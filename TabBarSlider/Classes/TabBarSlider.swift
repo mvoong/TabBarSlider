@@ -93,7 +93,7 @@ public class TabBarSlider: UIView {
         if self.indexTracker == nil && selectedIndex != nil {
             if result.isAlternative == true {
                 selectedIndex = result.index
-                collectionView.selectItemAtIndexPath(NSIndexPath(forItem: selectedIndex!, inSection: 0), animated: true, scrollPosition: .None)
+                collectionView.selectItemAtIndexPath(NSIndexPath(forItem: selectedIndex!, inSection: 0), animated: false, scrollPosition: .None)
                 setActiveIndex(result.index!, animated: true, moveToNaturalScrollPosition: true, wobble: false)
                 delegate?.tabBarSliderDidSelectItem(selectedIndex!)
             }
@@ -109,7 +109,7 @@ public class TabBarSlider: UIView {
             selectedIndex = result.index!
 
             if result.isAlternative == true {
-                collectionView.selectItemAtIndexPath(NSIndexPath(forItem: selectedIndex!, inSection: 0), animated: true, scrollPosition: .None)
+                collectionView.selectItemAtIndexPath(NSIndexPath(forItem: selectedIndex!, inSection: 0), animated: false, scrollPosition: .None)
                 delegate?.tabBarSliderDidSelectItem(selectedIndex!)
             }
             
@@ -123,7 +123,7 @@ public class TabBarSlider: UIView {
         selectedIndex = index
         collectionView.layoutIfNeeded() // Force items to be ready
         clearSelectionsExcept(index)
-        collectionView.selectItemAtIndexPath(NSIndexPath(forItem: index, inSection: 0), animated: true, scrollPosition: .None)
+        collectionView.selectItemAtIndexPath(NSIndexPath(forItem: index, inSection: 0), animated: false, scrollPosition: .None)
         setActiveIndex(index, animated: animated, moveToNaturalScrollPosition: true, wobble: animated)
     }
 
@@ -154,7 +154,7 @@ extension TabBarSlider: UICollectionViewDelegate, UICollectionViewDataSource {
             reportedIndex = indexPath.item
             
             setActiveIndex(indexPath.item, animated: true, moveToNaturalScrollPosition: true, wobble: true)
-            collectionView.selectItemAtIndexPath(NSIndexPath(forItem: indexPath.item, inSection: 0), animated: true, scrollPosition: .None)
+            collectionView.selectItemAtIndexPath(NSIndexPath(forItem: indexPath.item, inSection: 0), animated: false, scrollPosition: .None)
             clearSelectionsExcept(indexPath.item)
             delegate?.tabBarSliderDidSelectItem(indexPath.item)
         }
@@ -200,7 +200,9 @@ extension TabBarSlider {
                 self.collectionView.contentOffset = CGPointMake(self.targetOffsetForItem(index), 0)
             }
             self.layoutIndicatorView()
-            self.collectionView.layoutIfNeeded()
+            UIView.performWithoutAnimation({ () -> Void in
+                self.collectionView.layoutIfNeeded()
+            })
         }
 
         if animated {
@@ -209,9 +211,9 @@ extension TabBarSlider {
                     animation()
                 }, completion: nil)
             } else {
-                UIView.animateWithDuration(0.3, animations: { () -> Void in
+                UIView.animateWithDuration(0.3, delay: 0, options: .AllowUserInteraction, animations: { () -> Void in
                     animation()
-                })
+                }, completion: nil)
             }
         } else {
             animation()
