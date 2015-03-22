@@ -40,6 +40,22 @@ class ViewController: UIViewController {
         slider.cellNib = UINib(nibName: "ExampleControl", bundle: nil)
         slider.delegate = self
         slider.dataSource = self
+        slider.selectItem(0)
+        delay(1) {
+            self.slider.selectItem(3, animated: true)
+            self.delay(1) {
+                self.slider.selectItem(0, animated: true)
+            }
+        }
+    }
+    
+    func delay(delay:Double, closure:()->()) {
+        dispatch_after(
+            dispatch_time(
+                DISPATCH_TIME_NOW,
+                Int64(delay * Double(NSEC_PER_SEC))
+            ),
+            dispatch_get_main_queue(), closure)
     }
 }
 

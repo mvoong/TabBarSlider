@@ -35,21 +35,24 @@ public class TabBarSlider: UIView {
     var selectedIndex: Int?
     var reportedIndex: Int?
     var indexTracker: IndexTracker?
+    var isLayouting: Bool = false
     
     public required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
-        addSubview(collectionView)
         collectionView.backgroundColor = UIColor.clearColor()
-        collectionView.setTranslatesAutoresizingMaskIntoConstraints(false)
         (collectionView.collectionViewLayout as UICollectionViewFlowLayout).scrollDirection = .Horizontal
+        collectionView.setTranslatesAutoresizingMaskIntoConstraints(true)
+        collectionView.frame = bounds
+        collectionView.autoresizingMask = .None
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.scrollsToTop = false
         collectionView.allowsMultipleSelection = true
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.decelerationRate = UIScrollViewDecelerationRateFast
-        collectionView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
+        
+        addSubview(collectionView)
     }
     
     public func insertItem(index: Int) {
@@ -114,6 +117,14 @@ public class TabBarSlider: UIView {
         }
         
         indexTracker = nil
+    }
+    
+    public func selectItem(index: Int, animated: Bool = false) {
+        selectedIndex = index
+        collectionView.layoutIfNeeded() // Force items to be ready
+        clearSelectionsExcept(index)
+        collectionView.selectItemAtIndexPath(NSIndexPath(forItem: index, inSection: 0), animated: true, scrollPosition: .None)
+        setActiveIndex(index, animated: animated, moveToNaturalScrollPosition: true, wobble: animated)
     }
 
     public func reloadData() {
@@ -212,6 +223,8 @@ extension TabBarSlider {
             if let delegate = delegate {
                 if indicatorView == nil && delegate.respondsToSelector("tabBarSliderIndicatorView:") {
                     indicatorView = delegate.tabBarSliderIndicatorView(self)
+                    indicatorView?.autoresizingMask = UIViewAutoresizing.None
+                    indicatorView?.setTranslatesAutoresizingMaskIntoConstraints(true)
                 }
             }
             
@@ -229,12 +242,14 @@ extension TabBarSlider {
 // Scroll view
 extension TabBarSlider: UIScrollViewDelegate {
     public func scrollViewDidScroll(scrollView: UIScrollView) {
-        let index = naturalIndexForContentOffset(scrollView.contentOffset.x)
-        if selectedIndex != index {
-            selectedIndex = index
-            collectionView.selectItemAtIndexPath(NSIndexPath(forItem: index, inSection: 0), animated: false, scrollPosition: .None)
-            clearSelectionsExcept(index)
-            setActiveIndex(index, animated: true, moveToNaturalScrollPosition: false, wobble: false)
+        if !isLayouting {
+            let index = naturalIndexForContentOffset(scrollView.contentOffset.x)
+            if selectedIndex != index {
+                selectedIndex = index
+                collectionView.selectItemAtIndexPath(NSIndexPath(forItem: index, inSection: 0), animated: false, scrollPosition: .None)
+                clearSelectionsExcept(index)
+                setActiveIndex(index, animated: true, moveToNaturalScrollPosition: false, wobble: false)
+            }
         }
     }
     
@@ -252,6 +267,16 @@ extension TabBarSlider: UIScrollViewDelegate {
             reportedIndex = selectedIndex
             delegate?.tabBarSliderDidSelectItem(selectedIndex!)
         }
+    }
+    
+    public override func layoutSubviews() {
+        isLayouting = true
+        super.layoutSubviews()
+        collectionView.frame = bounds
+        if selectedIndex != nil {
+            setActiveIndex(selectedIndex!, animated: false, moveToNaturalScrollPosition: true, wobble: false)
+        }
+        isLayouting = false
     }
 }
 

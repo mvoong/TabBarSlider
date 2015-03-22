@@ -33,7 +33,7 @@
                                 </constraints>
                             </view>
                         </subviews>
-                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="Eta-Vt-0GS" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="Mxr-zn-Ovj"/>
                             <constraint firstAttribute="trailing" secondItem="Eta-Vt-0GS" secondAttribute="trailing" id="OSX-R8-dwy"/>
