@@ -16,157 +16,168 @@ public protocol TabBarSliderDelegate: UIScrollViewDelegate {
 
 public protocol TabBarSliderDataSource {
     func tabBarSliderNumberOfItems(slider: TabBarSlider) -> Int
-    func tabBarSlider(slider: TabBarSlider, controlForItem: Int) -> Control
-    func tabBarSlider(slider: TabBarSlider, configureControl: Control, forItem: Int)
-}
-
-class WrapperControl: UIControl {
-    var control: Control?
-    
-    init(view: Control) {
-        super.init(frame: CGRectZero)
-        
-        control = view;
-        setTranslatesAutoresizingMaskIntoConstraints(false)
-        view.setTranslatesAutoresizingMaskIntoConstraints(false)
-        addSubview(view)
-        view.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
-    }
-    
-    required init(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
-    
-    override var selected: Bool {
-        didSet {
-            updateState()
-        }
-    }
-    
-    override var highlighted: Bool {
-        didSet {
-            updateState()
-        }
-    }
-    
-    func updateState() {
-        if highlighted {
-            control?.state = .Highlighted
-        } else if selected {
-            control?.state = .Selected
-        } else {
-            control?.state = .Normal
-        }
-    }
+    func tabBarSlider(slider: TabBarSlider, configureCell: UICollectionViewCell, forItem: Int)
 }
 
 public class TabBarSlider: UIView {
     public var dataSource: TabBarSliderDataSource?
     public var delegate: TabBarSliderDelegate?
     public typealias UpdateOperations = Void -> Void
-    let scrollView = TabBarScrollView()
+    public var cellNib: UINib? {
+        didSet {
+            collectionView.registerNib(cellNib, forCellWithReuseIdentifier: "Cell")
+        }
+    }
+    let collectionView = UICollectionView(frame: CGRectZero, collectionViewLayout: UICollectionViewFlowLayout())
     var indicatorView: UIView?
     var indicatorConstraints = [NSLayoutConstraint]()
-    var controls = [WrapperControl]()
     
     var selectedIndex: Int?
     var reportedIndex: Int?
+    var indexTracker: IndexTracker?
     
     public required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
-        layoutMargins = UIEdgeInsetsZero
-        addSubview(scrollView)
-        scrollView.delegate = self
-        scrollView.showsHorizontalScrollIndicator = false
-        scrollView.decelerationRate = UIScrollViewDecelerationRateFast
-        scrollView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
+        addSubview(collectionView)
+        collectionView.backgroundColor = UIColor.clearColor()
+        collectionView.setTranslatesAutoresizingMaskIntoConstraints(false)
+        (collectionView.collectionViewLayout as UICollectionViewFlowLayout).scrollDirection = .Horizontal
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.scrollsToTop = false
+        collectionView.allowsMultipleSelection = true
+        collectionView.showsHorizontalScrollIndicator = false
+        collectionView.decelerationRate = UIScrollViewDecelerationRateFast
+        collectionView.autoPinEdgesToSuperviewEdgesWithInsets(UIEdgeInsetsZero)
     }
     
     public func insertItem(index: Int) {
+        let indexTracker = self.indexTracker ?? IndexTracker(itemCount: collectionView.numberOfItemsInSection(0))
+        collectionView.insertItemsAtIndexPaths([NSIndexPath(forItem: index, inSection: 0)])
+        indexTracker.insert(index)
         
+        if self.indexTracker == nil && selectedIndex != nil {
+            var result = indexTracker.followIndex(selectedIndex!)
+            selectedIndex = result.index
+            setActiveIndex(selectedIndex!, animated: true, moveToNaturalScrollPosition: true, wobble: false)
+        }
     }
     
     public func updateItem(index: Int) {
-        
+        collectionView.reloadItemsAtIndexPaths([NSIndexPath(forItem: index, inSection: 0)])
     }
     
     public func moveItem(#fromIndex: Int, toIndex: Int) {
+        let indexTracker = self.indexTracker ?? IndexTracker(itemCount: collectionView.numberOfItemsInSection(0))
+        collectionView.moveItemAtIndexPath(NSIndexPath(forItem: fromIndex, inSection: 0), toIndexPath: NSIndexPath(forItem: toIndex, inSection: 0))
+        indexTracker.move(fromIndex, toIndex: toIndex)
         
+        if self.indexTracker == nil && selectedIndex != nil {
+            var result = indexTracker.followIndex(selectedIndex!)
+            selectedIndex = result.index
+            println("New selected index: \(selectedIndex!)")
+            setActiveIndex(selectedIndex!, animated: true, moveToNaturalScrollPosition: true, wobble: false)
+        }
     }
     
     public func removeItem(index: Int) {
+        let indexTracker = self.indexTracker ?? IndexTracker(itemCount: collectionView.numberOfItemsInSection(0))
+        collectionView.deleteItemsAtIndexPaths([NSIndexPath(forItem: index, inSection: 0)])
+        indexTracker.delete(index)
+        let result = indexTracker.followIndex(index)
         
+        if self.indexTracker == nil && selectedIndex != nil {
+            if result.isAlternative == true {
+                selectedIndex = result.index
+                collectionView.selectItemAtIndexPath(NSIndexPath(forItem: selectedIndex!, inSection: 0), animated: true, scrollPosition: .None)
+                setActiveIndex(result.index!, animated: true, moveToNaturalScrollPosition: true, wobble: false)
+                delegate?.tabBarSliderDidSelectItem(selectedIndex!)
+            }
+        }
     }
     
     public func updateItems(operations: UpdateOperations) {
+        indexTracker = IndexTracker(itemCount: self.collectionView.numberOfItemsInSection(0))
         
-    }
-    
-    public func reloadData() {
-        if let dataSource = dataSource {
-            let itemCount = dataSource.tabBarSliderNumberOfItems(self)
-            for index in 0..<itemCount {
-                let control = dataSource.tabBarSlider(self, controlForItem: index)
+        collectionView.performBatchUpdates(operations, completion: nil)
+        if selectedIndex != nil {
+            var result = indexTracker!.followIndex(selectedIndex!)
+            selectedIndex = result.index!
 
-                let wrapper = WrapperControl(view: control)
-                wrapper.addSubview(control)
-                wrapper.addTarget(self, action: "pressControl:", forControlEvents: UIControlEvents.TouchUpInside)
-                
-                controls.append(wrapper)
-                scrollView.addSubview(wrapper)
+            if result.isAlternative == true {
+                collectionView.selectItemAtIndexPath(NSIndexPath(forItem: selectedIndex!, inSection: 0), animated: true, scrollPosition: .None)
+                delegate?.tabBarSliderDidSelectItem(selectedIndex!)
             }
-            addControlConstraints()
-            layoutIfNeeded()
             
-            if let first = controls.first {
-                self.pressControl(first)
+            setActiveIndex(selectedIndex!, animated: true, moveToNaturalScrollPosition: true, wobble: false)
+        }
+        
+        indexTracker = nil
+    }
+
+    public func reloadData() {
+        collectionView.reloadData()
+    }
+}
+
+extension TabBarSlider: UICollectionViewDelegate, UICollectionViewDataSource {
+    public func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("Cell", forIndexPath: indexPath) as UICollectionViewCell
+        dataSource?.tabBarSlider(self, configureCell: cell, forItem: indexPath.item)
+        
+        return cell
+    }
+    
+    public func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return dataSource?.tabBarSliderNumberOfItems(self) ?? 0
+    }
+    
+    public func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
+        return dataSource == nil ? 0 : 1
+    }
+    
+    public func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        if indexPath.item != selectedIndex {
+            selectedIndex = indexPath.item
+            reportedIndex = indexPath.item
+            
+            setActiveIndex(indexPath.item, animated: true, moveToNaturalScrollPosition: true, wobble: true)
+            collectionView.selectItemAtIndexPath(NSIndexPath(forItem: indexPath.item, inSection: 0), animated: true, scrollPosition: .None)
+            clearSelectionsExcept(indexPath.item)
+            delegate?.tabBarSliderDidSelectItem(indexPath.item)
+        }
+    }
+    
+    func clearSelectionsExcept(index: Int) {
+        for selectedIndexPath in collectionView.indexPathsForSelectedItems() {
+            let selectedIndexPath = selectedIndexPath as NSIndexPath
+            if index != selectedIndexPath.item {
+                collectionView.deselectItemAtIndexPath(selectedIndexPath, animated: true)
             }
         }
     }
     
-    func addControlConstraints() {
-        var previousControl: UIView?
-        for control in controls {
-            // Vertical constraint
-            control.autoPinEdgeToSuperviewEdge(.Top)
-            control.autoPinEdgeToSuperviewEdge(.Bottom)
-            control.autoMatchDimension(.Height, toDimension: .Height, ofView: scrollView)
-            
-            // Left constraint
-            if let previousControl = previousControl {
-                control.autoConstrainAttribute(.Left, toAttribute: .Right, ofView: previousControl)
-            } else {
-                control.autoPinEdgeToSuperviewEdge(.Left)
-            }
-            
-            // Right constraint
-            if control == controls.last {
-                control.autoPinEdgeToSuperviewEdge(.Right)
-            }
-            
-            previousControl = control
+    func nearestIndexTo(index: Int) -> Int? {
+        let numberOfItems = collectionView.numberOfItemsInSection(0)
+        if numberOfItems == 0 {
+            return nil
         }
+        return max(0, min(numberOfItems - 1, index))
+    }
+}
+
+extension TabBarSlider: UICollectionViewDelegateFlowLayout {
+    public func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat {
+        return 0
     }
     
-    func selectControlAtIndex(selectedIndex: Int) {
-        for (index, control) in enumerate(controls) {
-            control.selected = index == selectedIndex
-        }
+    public func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAtIndex section: Int) -> CGFloat {
+        return 0
     }
     
-    func pressControl(selectedControl: WrapperControl) {
-        if let index = find(controls, selectedControl) {
-            if index != selectedIndex {
-                let firstSelection = selectedIndex == nil
-                selectedIndex = index
-                reportedIndex = index
-                
-                setActiveIndex(index, animated: !firstSelection, moveToNaturalScrollPosition: !firstSelection, wobble: !firstSelection)
-                selectControlAtIndex(index)
-                delegate?.tabBarSliderDidSelectItem(index)
-            }
-        }
+    public func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+        return CGSizeMake(64, collectionView.frame.height)
     }
 }
 
@@ -175,11 +186,12 @@ extension TabBarSlider {
     func setActiveIndex(index: Int, animated: Bool, moveToNaturalScrollPosition: Bool, wobble: Bool) {
         let animation: Void -> Void = {
             if (moveToNaturalScrollPosition) {
-                self.scrollView.contentOffset = CGPointMake(self.targetOffsetForItem(index), 0)
+                self.collectionView.contentOffset = CGPointMake(self.targetOffsetForItem(index), 0)
             }
             self.layoutIndicatorView()
+            self.collectionView.layoutIfNeeded()
         }
-        
+
         if animated {
             if wobble {
                 UIView.animateWithDuration(0.7, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 1, options: .AllowUserInteraction, animations: { () -> Void in
@@ -194,11 +206,9 @@ extension TabBarSlider {
             animation()
         }
     }
-    
+
     func layoutIndicatorView() {
         if let selectedIndex = selectedIndex {
-            let control = controls[selectedIndex]
-            
             if let delegate = delegate {
                 if indicatorView == nil && delegate.respondsToSelector("tabBarSliderIndicatorView:") {
                     indicatorView = delegate.tabBarSliderIndicatorView(self)
@@ -207,10 +217,10 @@ extension TabBarSlider {
             
             if let indicatorView = indicatorView {
                 if indicatorView.superview == nil {
-                    scrollView.addSubview(indicatorView)
+                    collectionView.addSubview(indicatorView)
                 }
-
-                indicatorView.frame = control.frame
+                let selectedCellFrame = collectionView.collectionViewLayout.layoutAttributesForItemAtIndexPath(NSIndexPath(forItem: selectedIndex, inSection: 0)).frame
+                indicatorView.frame = selectedCellFrame
             }
         }
     }
@@ -222,7 +232,8 @@ extension TabBarSlider: UIScrollViewDelegate {
         let index = naturalIndexForContentOffset(scrollView.contentOffset.x)
         if selectedIndex != index {
             selectedIndex = index
-            selectControlAtIndex(index)
+            collectionView.selectItemAtIndexPath(NSIndexPath(forItem: index, inSection: 0), animated: false, scrollPosition: .None)
+            clearSelectionsExcept(index)
             setActiveIndex(index, animated: true, moveToNaturalScrollPosition: false, wobble: false)
         }
     }
@@ -247,43 +258,93 @@ extension TabBarSlider: UIScrollViewDelegate {
 // Calculations
 extension TabBarSlider {
     func naturalIndexForContentOffset(offset: CGFloat) -> Int {
-        let scrollableWidth = scrollView.contentSize.width - bounds.width
+        let scrollableWidth = collectionView.contentSize.width - bounds.width
+        if offset <= 0 {
+            return 0
+        } else if offset >= scrollableWidth {
+            return collectionView.numberOfItemsInSection(0) - 1
+        }
+        
         var offsetRatio = offset / scrollableWidth
         offsetRatio = max(0, min(scrollableWidth, offsetRatio))
+        let targetOffsetInScrollView = offsetRatio * collectionView.contentSize.width
         
-        let targetOffsetInScrollView = offsetRatio * scrollView.contentSize.width
-        let index = indexForPosition(targetOffsetInScrollView)
-        
-        return index
-    }
-    
-    func indexForPosition(position: CGFloat) -> Int {
-        if position < 0 {
-            return 0
-        }
-        if position > scrollView.contentSize.width {
-            return controls.count - 1
-        }
-        for (index, control) in enumerate(controls) {
-            if control.frame.minX <= position && position <= control.frame.maxX {
-                return index
-            }
-        }
-        return 0
+        return collectionView.indexPathForItemAtPoint(CGPointMake(targetOffsetInScrollView, 0))?.item ?? 0
     }
     
     func targetOffsetForItem(index: Int) -> CGFloat {
-        let frame = controls[index].frame
-        let offsetRatio = frame.minX / (scrollView.contentSize.width - frame.width)
-        let scrollableWidth = scrollView.contentSize.width - bounds.width
+        let frame = collectionView.collectionViewLayout.layoutAttributesForItemAtIndexPath(NSIndexPath(forItem: index, inSection: 0)).frame
+        let offsetRatio = frame.minX / (collectionView.contentSize.width - frame.width)
+        let scrollableWidth = collectionView.contentSize.width - bounds.width
         
         return offsetRatio * scrollableWidth
     }
 }
 
-class TabBarScrollView: UIScrollView
-{
-    override func touchesShouldCancelInContentView(view: UIView!) -> Bool {
-        return true
+class IndexTracker {
+    enum OperationType: Int {
+        case Delete = 0
+        case Insert = 1
+        case Move = 2
+    }
+    
+    typealias Operation = (type: OperationType, firstIndex: Int, lastIndex: Int?)
+    
+    var operations = [Operation]()
+    var itemCount: Int
+    
+    init(itemCount: Int) {
+        self.itemCount = itemCount;
+    }
+    
+    func delete(index: Int) {
+        operations.append((.Delete, index, nil))
+    }
+    
+    func insert(index: Int) {
+        operations.append((.Insert, index, nil))
+    }
+    
+    func move(fromIndex: Int, toIndex: Int) {
+        operations.append((.Move, fromIndex, toIndex))
+    }
+    
+    func followIndex(index: Int) -> (index: Int?, isAlternative: Bool?) {
+        var newIndex = index
+        let deleteOperations = operations.filter { $0.type == .Delete }
+        let isAlternative = (deleteOperations.filter { $0.firstIndex == index }).count > 0
+        for deleteOperation in deleteOperations {
+            itemCount--
+            
+            if itemCount == 0 {
+                return (nil, nil)
+            }
+            
+            if deleteOperation.firstIndex <= index {
+                newIndex--
+            }
+            newIndex = max(0, min(index, itemCount - 1))
+        }
+        
+        let insertOperations = operations.filter { $0.type == .Insert }
+        for insertOperation in insertOperations {
+            itemCount++
+            if insertOperation.firstIndex <= index {
+                newIndex++
+            }
+        }
+
+        let moveOperations = operations.filter { $0.type == .Move }
+        for moveOperation in moveOperations {
+            if index == moveOperation.firstIndex {
+                newIndex = moveOperation.lastIndex!
+            } else if moveOperation.firstIndex > index && moveOperation.lastIndex <= index {
+                newIndex++
+            } else if moveOperation.firstIndex <= index && moveOperation.lastIndex >= index {
+                newIndex = newIndex - 1
+            }
+        }
+        
+        return (newIndex, isAlternative)
     }
 }

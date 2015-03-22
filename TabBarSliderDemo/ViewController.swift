@@ -17,11 +17,11 @@ class ViewController: UIViewController {
     
     lazy var items = [
         Item(icon: "", label: "Music"),
-        Item(icon: "", label: "RSS"),
+        Item(icon: "", label: "Wi-Fi"),
         Item(icon: "", label: "Camera"),
         Item(icon: "", label: "LinkedIn"),
         Item(icon: "", label: "Settings"),
-        Item(icon: "", label: "Bus"),
+        Item(icon: "", label: "Transport"),
         Item(icon: "", label: "Chat"),
         Item(icon: "", label: "Music"),
         Item(icon: "", label: "RSS"),
@@ -37,9 +37,9 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        slider.cellNib = UINib(nibName: "ExampleControl", bundle: nil)
         slider.delegate = self
         slider.dataSource = self
-        slider.reloadData()
     }
 }
 
@@ -59,17 +59,9 @@ extension ViewController: TabBarSliderDataSource {
         return items.count
     }
     
-    func tabBarSlider(slider: TabBarSlider, configureControl: Control, forItem: Int) {
-        
-    }
-    
-    func tabBarSlider(slider: TabBarSlider, controlForItem: Int) -> Control {
-        let nib = UINib(nibName: "ExampleControl", bundle: nil)
-        var control = nib.instantiateWithOwner(nil, options: nil).first as ExampleControl
-        let item = items[controlForItem]
-        control.label.text = item.label
-        control.iconLabel.text = item.icon
-        
-        return control
+    func tabBarSlider(slider: TabBarSlider, configureCell: UICollectionViewCell, forItem: Int) {
+        let cell = configureCell as ExampleControl
+        cell.label.text = items[forItem].label
+        cell.iconLabel.text = items[forItem].icon
     }
 }

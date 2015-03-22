@@ -18,9 +18,18 @@
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Eta-Vt-0GS" customClass="TabBarSlider" customModule="MVTabBarSlider">
                                 <rect key="frame" x="0.0" y="20" width="320" height="55"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="normal" translatesAutoresizingMaskIntoConstraints="NO" id="sSM-Er-UDO" userLabel="Background">
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="55"/>
+                                    </imageView>
+                                </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
+                                    <constraint firstItem="sSM-Er-UDO" firstAttribute="top" secondItem="Eta-Vt-0GS" secondAttribute="top" id="BPF-Me-8fU"/>
+                                    <constraint firstItem="sSM-Er-UDO" firstAttribute="leading" secondItem="Eta-Vt-0GS" secondAttribute="leading" id="FwD-QM-Q8g"/>
+                                    <constraint firstAttribute="trailing" secondItem="sSM-Er-UDO" secondAttribute="trailing" id="L6S-em-w3d"/>
                                     <constraint firstAttribute="height" constant="55" id="TOx-Tv-e5V"/>
+                                    <constraint firstAttribute="bottom" secondItem="sSM-Er-UDO" secondAttribute="bottom" id="eC5-BB-l9F"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -41,4 +50,7 @@
             <point key="canvasLocation" x="184" y="152"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="normal" width="3" height="55"/>
+    </resources>
 </document>
