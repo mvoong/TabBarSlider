@@ -29,6 +29,7 @@ public class TabBarSlider: UIView {
             collectionView.registerNib(cellNib, forCellWithReuseIdentifier: "Cell")
         }
     }
+    
     public var itemWidth: CGFloat = 64 {
         didSet {
             if itemWidth != oldValue {
@@ -40,9 +41,17 @@ public class TabBarSlider: UIView {
         }
     }
     
+    public var estimatedItemWidth: CGFloat? {
+        didSet {
+            if estimatedItemWidth != oldValue {
+                let size = estimatedItemWidth != nil ? CGSizeMake(estimatedItemWidth!, self.frame.height) : CGSizeZero
+                (collectionView.collectionViewLayout as UICollectionViewFlowLayout).estimatedItemSize = size
+            }
+        }
+    }
+    
     let collectionView = UICollectionView(frame: CGRectZero, collectionViewLayout: UICollectionViewFlowLayout())
     var indicatorView: UIView?
-    var indicatorConstraints = [NSLayoutConstraint]()
     
     var selectedIndex: Int?
     var reportedIndex: Int?
@@ -181,6 +190,11 @@ extension TabBarSlider: UICollectionViewDelegate, UICollectionViewDataSource {
         }
     }
     
+    public func collectionView(collectionView: UICollectionView, shouldDeselectItemAtIndexPath indexPath: NSIndexPath) -> Bool {
+        // Don't allow a collection view with no selections
+        return collectionView.indexPathsForSelectedItems().count > 1
+    }
+    
     func clearSelectionsExcept(index: Int) {
         for selectedIndexPath in collectionView.indexPathsForSelectedItems() {
             let selectedIndexPath = selectedIndexPath as NSIndexPath
@@ -244,13 +258,13 @@ extension TabBarSlider {
             }
             
             if let indicatorView = indicatorView {
-                println("Selected: \(selectedIndex)")
-                if indicatorView.superview == nil {
-                    collectionView.addSubview(indicatorView)
-                }
-                let selectedCellFrame = collectionView.collectionViewLayout.layoutAttributesForItemAtIndexPath(NSIndexPath(forItem: selectedIndex, inSection: 0)).frame
-                indicatorView.frame = selectedCellFrame
-                println("Frame: \(selectedCellFrame)")
+//                println("Selected: \(selectedIndex)")
+//                if indicatorView.superview == nil {
+//                    collectionView.addSubview(indicatorView)
+//                }
+//                let selectedCellFrame = collectionView.collectionViewLayout.layoutAttributesForItemAtIndexPath(NSIndexPath(forItem: selectedIndex, inSection: 0)).frame
+//                indicatorView.frame = selectedCellFrame
+//                println("Frame: \(selectedCellFrame)")
             }
         }
     }
