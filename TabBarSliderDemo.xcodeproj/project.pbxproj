@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		270F09F71AC55D700057FEB0 /* SimpleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 270F09F61AC55D700057FEB0 /* SimpleCell.swift */; };
+		270F09F91AC55D830057FEB0 /* SimpleCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 270F09F81AC55D830057FEB0 /* SimpleCell.xib */; };
+		270F09FB1AC55F9E0057FEB0 /* DotIndicator.xib in Resources */ = {isa = PBXBuildFile; fileRef = 270F09FA1AC55F9E0057FEB0 /* DotIndicator.xib */; };
 		2749025D1ABC2E7B00DB0FAB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2749025C1ABC2E7B00DB0FAB /* AppDelegate.swift */; };
 		2749025F1ABC2E7B00DB0FAB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2749025E1ABC2E7B00DB0FAB /* ViewController.swift */; };
 		274902621ABC2E7B00DB0FAB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 274902601ABC2E7B00DB0FAB /* Main.storyboard */; };
@@ -44,6 +47,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		270F09F61AC55D700057FEB0 /* SimpleCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleCell.swift; sourceTree = "<group>"; };
+		270F09F81AC55D830057FEB0 /* SimpleCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SimpleCell.xib; sourceTree = "<group>"; };
+		270F09FA1AC55F9E0057FEB0 /* DotIndicator.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DotIndicator.xib; sourceTree = "<group>"; };
 		274902571ABC2E7B00DB0FAB /* TabBarSliderDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TabBarSliderDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2749025B1ABC2E7B00DB0FAB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2749025C1ABC2E7B00DB0FAB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -126,6 +132,9 @@
 				274902A51ABC385300DB0FAB /* ExampleControl.xib */,
 				274902A71ABC4E5600DB0FAB /* ExampleControl.swift */,
 				274902B11ABC835F00DB0FAB /* ExampleIndicator.xib */,
+				270F09F61AC55D700057FEB0 /* SimpleCell.swift */,
+				270F09F81AC55D830057FEB0 /* SimpleCell.xib */,
+				270F09FA1AC55F9E0057FEB0 /* DotIndicator.xib */,
 			);
 			path = TabBarSliderDemo;
 			sourceTree = "<group>";
@@ -249,10 +258,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				270F09F91AC55D830057FEB0 /* SimpleCell.xib in Resources */,
 				274902B21ABC835F00DB0FAB /* ExampleIndicator.xib in Resources */,
 				274902A61ABC385300DB0FAB /* ExampleControl.xib in Resources */,
 				274902B01ABC7FD300DB0FAB /* categories.ttf in Resources */,
 				274902621ABC2E7B00DB0FAB /* Main.storyboard in Resources */,
+				270F09FB1AC55F9E0057FEB0 /* DotIndicator.xib in Resources */,
 				274902671ABC2E7B00DB0FAB /* LaunchScreen.xib in Resources */,
 				274902641ABC2E7B00DB0FAB /* Images.xcassets in Resources */,
 			);
@@ -321,6 +332,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2749025F1ABC2E7B00DB0FAB /* ViewController.swift in Sources */,
+				270F09F71AC55D700057FEB0 /* SimpleCell.swift in Sources */,
 				274902A81ABC4E5600DB0FAB /* ExampleControl.swift in Sources */,
 				2749025D1ABC2E7B00DB0FAB /* AppDelegate.swift in Sources */,
 			);

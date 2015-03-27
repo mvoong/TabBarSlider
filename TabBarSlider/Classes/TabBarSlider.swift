@@ -345,7 +345,7 @@ extension TabBarSlider: UIScrollViewDelegate {
         isLayouting = true
         super.layoutSubviews()
         collectionView.frame = bounds
-        if selectedIndex != nil {
+        if selectedIndex != nil && !collectionView.dragging && !collectionView.tracking && !collectionView.decelerating {
             setActiveIndex(selectedIndex!, animated: false, moveToNaturalScrollPosition: true, wobble: false)
         }
         isLayouting = false

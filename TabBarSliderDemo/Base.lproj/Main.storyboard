@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6751" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="U8E-Ft-JnS">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6736"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--Navigation Controller-->
@@ -33,8 +34,14 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Slider 1" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="e77-s1-Gjf">
+                                <rect key="frame" x="16" y="80" width="288" height="27.5"/>
+                                <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="20"/>
+                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Eta-Vt-0GS" customClass="TabBarSlider" customModule="MVTabBarSlider">
-                                <rect key="frame" x="0.0" y="64" width="320" height="55"/>
+                                <rect key="frame" x="0.0" y="123" width="320" height="55"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="normal" translatesAutoresizingMaskIntoConstraints="NO" id="sSM-Er-UDO" userLabel="Background">
                                         <rect key="frame" x="0.0" y="0.0" width="320" height="55"/>
@@ -49,50 +56,34 @@
                                     <constraint firstAttribute="bottom" secondItem="sSM-Er-UDO" secondAttribute="bottom" id="eC5-BB-l9F"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6uR-Bg-qML" customClass="TabBarSlider" customModule="MVTabBarSlider">
-                                <rect key="frame" x="0.0" y="119" width="320" height="55"/>
-                                <subviews>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="normal" translatesAutoresizingMaskIntoConstraints="NO" id="ei2-lg-g4G" userLabel="Background">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="55"/>
-                                    </imageView>
-                                </subviews>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6uR-Bg-qML" userLabel="Simple Dot Slider" customClass="TabBarSlider" customModule="MVTabBarSlider">
+                                <rect key="frame" x="0.0" y="233" width="320" height="70"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="55" id="3pg-r7-G3O"/>
-                                    <constraint firstAttribute="bottom" secondItem="ei2-lg-g4G" secondAttribute="bottom" id="5DU-C8-L8w"/>
-                                    <constraint firstItem="ei2-lg-g4G" firstAttribute="top" secondItem="6uR-Bg-qML" secondAttribute="top" id="e1h-Jt-oie"/>
-                                    <constraint firstItem="ei2-lg-g4G" firstAttribute="leading" secondItem="6uR-Bg-qML" secondAttribute="leading" id="gk0-9g-GUg"/>
-                                    <constraint firstAttribute="trailing" secondItem="ei2-lg-g4G" secondAttribute="trailing" id="u5r-92-0kE"/>
+                                    <constraint firstAttribute="height" constant="70" id="3pg-r7-G3O"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NcT-yT-gSe" customClass="TabBarSlider" customModule="MVTabBarSlider">
-                                <rect key="frame" x="0.0" y="174" width="320" height="55"/>
-                                <subviews>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="normal" translatesAutoresizingMaskIntoConstraints="NO" id="Mhs-Jz-vyl" userLabel="Background">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="55"/>
-                                    </imageView>
-                                </subviews>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <constraints>
-                                    <constraint firstItem="Mhs-Jz-vyl" firstAttribute="leading" secondItem="NcT-yT-gSe" secondAttribute="leading" id="PZc-dF-qYP"/>
-                                    <constraint firstAttribute="bottom" secondItem="Mhs-Jz-vyl" secondAttribute="bottom" id="fZf-Cj-LLI"/>
-                                    <constraint firstAttribute="trailing" secondItem="Mhs-Jz-vyl" secondAttribute="trailing" id="fc9-Bt-rNa"/>
-                                    <constraint firstAttribute="height" constant="55" id="lut-W3-WGu"/>
-                                    <constraint firstItem="Mhs-Jz-vyl" firstAttribute="top" secondItem="NcT-yT-gSe" secondAttribute="top" id="xoE-cJ-u0c"/>
-                                </constraints>
-                            </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Slider 2" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mw1-CQ-NRQ" userLabel="Slider2">
+                                <rect key="frame" x="16" y="216.5" width="288" height="27.5"/>
+                                <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="20"/>
+                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="6uR-Bg-qML" firstAttribute="top" secondItem="Eta-Vt-0GS" secondAttribute="bottom" id="2a8-DE-ZDp"/>
-                            <constraint firstItem="NcT-yT-gSe" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="Ejt-yf-evD"/>
+                            <constraint firstItem="mw1-CQ-NRQ" firstAttribute="top" secondItem="Eta-Vt-0GS" secondAttribute="bottom" constant="38" id="4o0-Ls-GYQ"/>
+                            <constraint firstItem="e77-s1-Gjf" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" id="7cN-ht-Zz5"/>
+                            <constraint firstItem="mw1-CQ-NRQ" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" id="8f4-Ue-uRT"/>
+                            <constraint firstAttribute="centerX" secondItem="mw1-CQ-NRQ" secondAttribute="centerX" id="Iam-d0-rai"/>
                             <constraint firstItem="Eta-Vt-0GS" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="Mxr-zn-Ovj"/>
                             <constraint firstAttribute="trailing" secondItem="Eta-Vt-0GS" secondAttribute="trailing" id="OSX-R8-dwy"/>
                             <constraint firstAttribute="trailing" secondItem="6uR-Bg-qML" secondAttribute="trailing" id="XNu-nM-sEy"/>
-                            <constraint firstAttribute="trailing" secondItem="NcT-yT-gSe" secondAttribute="trailing" id="fM6-Mr-32I"/>
-                            <constraint firstItem="Eta-Vt-0GS" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" id="jPK-CU-YgE"/>
-                            <constraint firstItem="NcT-yT-gSe" firstAttribute="top" secondItem="6uR-Bg-qML" secondAttribute="bottom" id="kHl-mI-4Fl"/>
+                            <constraint firstItem="e77-s1-Gjf" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="16" id="YcE-zk-4mk"/>
+                            <constraint firstItem="6uR-Bg-qML" firstAttribute="top" secondItem="mw1-CQ-NRQ" secondAttribute="bottom" constant="-10.5" id="beg-M0-flv"/>
                             <constraint firstItem="6uR-Bg-qML" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="vQY-6z-TAz"/>
+                            <constraint firstAttribute="centerX" secondItem="e77-s1-Gjf" secondAttribute="centerX" id="xGF-bm-yoI"/>
+                            <constraint firstItem="Eta-Vt-0GS" firstAttribute="top" secondItem="e77-s1-Gjf" secondAttribute="bottom" constant="15.5" id="yji-kO-6PU"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Demo" id="xNS-gv-CsD"/>
@@ -100,7 +91,6 @@
                     <connections>
                         <outlet property="slider" destination="Eta-Vt-0GS" id="ebr-nK-o5N"/>
                         <outlet property="slider2" destination="6uR-Bg-qML" id="LBj-gf-i9d"/>
-                        <outlet property="slider3" destination="NcT-yT-gSe" id="Yen-BB-Y1s"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>

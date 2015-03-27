@@ -22,19 +22,14 @@ class ViewController: UIViewController {
         Item(icon: "", label: "LinkedIn"),
         Item(icon: "", label: "Settings"),
         Item(icon: "", label: "Transport"),
-        Item(icon: "", label: "Chat"),
         Item(icon: "", label: "Music"),
         Item(icon: "", label: "RSS"),
-        Item(icon: "", label: "Camera"),
-        Item(icon: "", label: "LinkedIn"),
-        Item(icon: "", label: "Settings"),
         Item(icon: "", label: "Bus"),
         Item(icon: "", label: "Chat")
     ]
     
     @IBOutlet weak var slider: TabBarSlider!
     @IBOutlet weak var slider2: TabBarSlider!
-    @IBOutlet weak var slider3: TabBarSlider!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,15 +37,12 @@ class ViewController: UIViewController {
         slider.cellNib = UINib(nibName: "ExampleControl", bundle: nil)
         slider.delegate = self
         slider.dataSource = self
-        slider.estimatedItemWidth = 64
+        slider.itemWidth = 70
         
-        slider2.cellNib = UINib(nibName: "ExampleControl", bundle: nil)
+        slider2.cellNib = UINib(nibName: "SimpleCell", bundle: nil)
         slider2.delegate = self
         slider2.dataSource = self
-        
-        slider3.cellNib = UINib(nibName: "ExampleControl", bundle: nil)
-        slider3.delegate = self
-        slider3.dataSource = self
+        slider2.estimatedItemWidth = 64
     }
     
     func delay(delay:Double, closure:()->()) {
@@ -65,10 +57,15 @@ class ViewController: UIViewController {
 
 extension ViewController: TabBarSliderDelegate {
     func tabBarSliderDidSelectItem(item: Int) {
-        println("Found: \(item)")
+        println("Selected item: \(item)")
     }
     
     func tabBarSliderIndicatorView(slider: TabBarSlider) -> UIView {
+        if slider == self.slider2 {
+            let nib = UINib(nibName: "DotIndicator", bundle: nil)
+            return nib.instantiateWithOwner(nil, options: nil).first as UIView
+        }
+        
         let nib = UINib(nibName: "ExampleIndicator", bundle: nil)
         return nib.instantiateWithOwner(nil, options: nil).first as UIView
     }
@@ -80,8 +77,11 @@ extension ViewController: TabBarSliderDataSource {
     }
     
     func tabBarSlider(slider: TabBarSlider, configureCell: UICollectionViewCell, forItem: Int) {
-        let cell = configureCell as ExampleControl
-        cell.label.text = items[forItem].label
-        cell.iconLabel.text = items[forItem].icon
+        if let cell = configureCell as? ExampleControl {
+            cell.label.text = items[forItem].label
+            cell.iconLabel.text = items[forItem].icon
+        } else if let cell = configureCell as? SimpleCell {
+            cell.label.text = items[forItem].label
+        }
     }
 }
