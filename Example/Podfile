@@ -3,7 +3,7 @@ platform :ios, '8.0'
 use_frameworks!
 
 target 'TabBarSliderDemo' do
-  pod 'MVTabBarSlider', :path => 'TabBarSlider'
+  pod 'MVTabBarSlider', :path => '../'
 end
 
 target 'TabBarSliderDemoTests' do
