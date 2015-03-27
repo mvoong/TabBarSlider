@@ -42,6 +42,7 @@ class ViewController: UIViewController {
         slider.cellNib = UINib(nibName: "ExampleControl", bundle: nil)
         slider.delegate = self
         slider.dataSource = self
+        slider.estimatedItemWidth = 64
         
         slider2.cellNib = UINib(nibName: "ExampleControl", bundle: nil)
         slider2.delegate = self
@@ -50,10 +51,6 @@ class ViewController: UIViewController {
         slider3.cellNib = UINib(nibName: "ExampleControl", bundle: nil)
         slider3.delegate = self
         slider3.dataSource = self
-        
-        delay(2) {
-            self.slider.itemWidth = 40
-        }
     }
     
     func delay(delay:Double, closure:()->()) {

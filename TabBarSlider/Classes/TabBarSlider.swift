@@ -258,13 +258,11 @@ extension TabBarSlider {
             }
             
             if let indicatorView = indicatorView {
-//                println("Selected: \(selectedIndex)")
-//                if indicatorView.superview == nil {
-//                    collectionView.addSubview(indicatorView)
-//                }
-//                let selectedCellFrame = collectionView.collectionViewLayout.layoutAttributesForItemAtIndexPath(NSIndexPath(forItem: selectedIndex, inSection: 0)).frame
-//                indicatorView.frame = selectedCellFrame
-//                println("Frame: \(selectedCellFrame)")
+                if indicatorView.superview == nil {
+                    collectionView.addSubview(indicatorView)
+                }
+                let selectedCellFrame = collectionView.collectionViewLayout.layoutAttributesForItemAtIndexPath(NSIndexPath(forItem: selectedIndex, inSection: 0)).frame
+                indicatorView.frame = selectedCellFrame
             }
         }
     }
