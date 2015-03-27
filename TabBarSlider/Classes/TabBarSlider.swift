@@ -1,6 +1,6 @@
 //
 //  TabBarSlider.swift
-//  TabBarSliderDemo
+//  TabBarSlider
 //
 //  Created by Michael Voong on 20/03/2015.
 //  Copyright (c) 2015 Michael Voong. All rights reserved.
@@ -30,6 +30,9 @@ public class TabBarSlider: UIView {
         }
     }
     
+    /**
+    A fixed item width. Use estimatedItemWidth if your cells are of variable width.
+    */
     public var itemWidth: CGFloat = 64 {
         didSet {
             if itemWidth != oldValue {
@@ -41,10 +44,17 @@ public class TabBarSlider: UIView {
         }
     }
     
-    public var estimatedItemWidth: CGFloat? {
+    /**
+    The estimated width of the items, used to help lay out the scrollview. The default value of this property is 0. Setting it to any other 
+    value causes the tab bar slider to query each cell for its actual size using the cell’s preferredLayoutAttributesFittingAttributes: method. 
+    If all of your cells are the same width, use the itemWidth property, instead of this property, to specify the cell size instead. 
+    
+    See -[UICollectionViewFlowLayout estimatedItemSize]
+    */
+    public var estimatedItemWidth: CGFloat = 0 {
         didSet {
             if estimatedItemWidth != oldValue {
-                let size = estimatedItemWidth != nil ? CGSizeMake(estimatedItemWidth!, self.frame.height) : CGSizeZero
+                let size = estimatedItemWidth != 0 ? CGSizeMake(estimatedItemWidth, self.frame.height) : CGSizeZero
                 (collectionView.collectionViewLayout as UICollectionViewFlowLayout).estimatedItemSize = size
             }
         }
@@ -85,36 +95,21 @@ public class TabBarSlider: UIView {
         addSubview(collectionView)
     }
     
-    public func insertItem(index: Int) {
-        let indexTracker = self.indexTracker ?? IndexTracker(itemCount: collectionView.numberOfItemsInSection(0))
-        collectionView.insertItemsAtIndexPaths([NSIndexPath(forItem: index, inSection: 0)])
-        indexTracker.insert(index)
-        
-        if self.indexTracker == nil && selectedIndex != nil {
-            var result = indexTracker.followIndex(selectedIndex!)
-            selectedIndex = result.index
-            setActiveIndex(selectedIndex!, animated: true, moveToNaturalScrollPosition: true, wobble: false)
-        }
-    }
+    /**
+    Reloads an item with animation. The delegate will be asked to reconfigure the cell.
     
-    public func updateItem(index: Int) {
+    :param: index The index of the item to be reloaded
+    */
+    public func reloadItem(index: Int) {
         collectionView.reloadItemsAtIndexPaths([NSIndexPath(forItem: index, inSection: 0)])
     }
     
-    public func moveItem(#fromIndex: Int, toIndex: Int) {
-        let indexTracker = self.indexTracker ?? IndexTracker(itemCount: collectionView.numberOfItemsInSection(0))
-        collectionView.moveItemAtIndexPath(NSIndexPath(forItem: fromIndex, inSection: 0), toIndexPath: NSIndexPath(forItem: toIndex, inSection: 0))
-        indexTracker.move(fromIndex, toIndex: toIndex)
-        
-        if self.indexTracker == nil && selectedIndex != nil {
-            var result = indexTracker.followIndex(selectedIndex!)
-            selectedIndex = result.index
-            println("New selected index: \(selectedIndex!)")
-            setActiveIndex(selectedIndex!, animated: true, moveToNaturalScrollPosition: true, wobble: false)
-        }
-    }
+    /**
+    Deletes an item.
     
-    public func removeItem(index: Int) {
+    :param: index The index of the item to delete
+    */
+    public func deleteItem(index: Int) {
         let indexTracker = self.indexTracker ?? IndexTracker(itemCount: collectionView.numberOfItemsInSection(0))
         collectionView.deleteItemsAtIndexPaths([NSIndexPath(forItem: index, inSection: 0)])
         indexTracker.delete(index)
@@ -129,8 +124,49 @@ public class TabBarSlider: UIView {
             }
         }
     }
+
+    /**
+    Inserts an item with animation
     
-    public func updateItems(operations: UpdateOperations) {
+    :param: index The index where the item has been inserted
+    */
+    public func insertItem(index: Int) {
+        let indexTracker = self.indexTracker ?? IndexTracker(itemCount: collectionView.numberOfItemsInSection(0))
+        collectionView.insertItemsAtIndexPaths([NSIndexPath(forItem: index, inSection: 0)])
+        indexTracker.insert(index)
+        
+        if self.indexTracker == nil && selectedIndex != nil {
+            var result = indexTracker.followIndex(selectedIndex!)
+            selectedIndex = result.index
+            setActiveIndex(selectedIndex!, animated: true, moveToNaturalScrollPosition: true, wobble: false)
+        }
+    }
+    
+    /**
+    Moves an item with animation
+    
+    :param: fromIndex The old index
+    :param: toIndex The new index
+    */
+    public func moveItem(#fromIndex: Int, toIndex: Int) {
+        let indexTracker = self.indexTracker ?? IndexTracker(itemCount: collectionView.numberOfItemsInSection(0))
+        collectionView.moveItemAtIndexPath(NSIndexPath(forItem: fromIndex, inSection: 0), toIndexPath: NSIndexPath(forItem: toIndex, inSection: 0))
+        indexTracker.move(fromIndex, toIndex: toIndex)
+        
+        if self.indexTracker == nil && selectedIndex != nil {
+            var result = indexTracker.followIndex(selectedIndex!)
+            selectedIndex = result.index
+            println("New selected index: \(selectedIndex!)")
+            setActiveIndex(selectedIndex!, animated: true, moveToNaturalScrollPosition: true, wobble: false)
+        }
+    }
+    
+    /**
+    Apply a series of delete, insert and move operations in a single animation.
+
+    :param: operations A closure performing one or more update, remove, insert or move operations. See reloadItem:, deleteItem:, insertItem: and moveItem:.
+    */
+    public func reloadItems(operations: UpdateOperations) {
         indexTracker = IndexTracker(itemCount: self.collectionView.numberOfItemsInSection(0))
         
         collectionView.performBatchUpdates(operations, completion: nil)
@@ -161,6 +197,8 @@ public class TabBarSlider: UIView {
         collectionView.reloadData()
     }
 }
+
+// MARK: Collection view delegate
 
 extension TabBarSlider: UICollectionViewDelegate, UICollectionViewDataSource {
     public func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
@@ -205,6 +243,8 @@ extension TabBarSlider: UICollectionViewDelegate, UICollectionViewDataSource {
     }
 }
 
+// MARK: Flow Layout Delegate
+
 extension TabBarSlider: UICollectionViewDelegateFlowLayout {
     public func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat {
         return 0
@@ -219,7 +259,8 @@ extension TabBarSlider: UICollectionViewDelegateFlowLayout {
     }
 }
 
-// Animations
+// MARK: Animations
+
 extension TabBarSlider {
     func setActiveIndex(index: Int, animated: Bool, moveToNaturalScrollPosition: Bool, wobble: Bool) {
         let animation: Void -> Void = {
@@ -268,7 +309,8 @@ extension TabBarSlider {
     }
 }
 
-// Scroll view
+// MARK: Scroll view
+
 extension TabBarSlider: UIScrollViewDelegate {
     public func scrollViewDidScroll(scrollView: UIScrollView) {
         if !isLayouting {
@@ -299,6 +341,7 @@ extension TabBarSlider: UIScrollViewDelegate {
     }
     
     public override func layoutSubviews() {
+        // Don't automatically select items while layouting (e.g. while rotating)
         isLayouting = true
         super.layoutSubviews()
         collectionView.frame = bounds
@@ -309,8 +352,15 @@ extension TabBarSlider: UIScrollViewDelegate {
     }
 }
 
-// Calculations
+// MARK: Calculations
+
 extension TabBarSlider {
+    /**
+    Given a scroll position, calculates the index of the item that should be selected.
+
+    :param: offset The current scroll offset
+    :returns: The index path that should be selected
+    */
     func naturalIndexForContentOffset(offset: CGFloat) -> Int {
         let scrollableWidth = collectionView.contentSize.width - bounds.width
         if offset <= 0 {
@@ -326,6 +376,12 @@ extension TabBarSlider {
         return collectionView.indexPathForItemAtPoint(CGPointMake(targetOffsetInScrollView, 0))?.item ?? 0
     }
     
+    /**
+    Given an index, calculates the required scroll position that would result in the item being in its natural position
+    
+    :param: index The index of the item
+    :returns: The scroll offset
+    */
     func targetOffsetForItem(index: Int) -> CGFloat {
         let frame = collectionView.collectionViewLayout.layoutAttributesForItemAtIndexPath(NSIndexPath(forItem: index, inSection: 0)).frame
         let offsetRatio = frame.minX / (collectionView.contentSize.width - frame.width)
@@ -366,6 +422,14 @@ class IndexTracker {
         operations.append((.Move, fromIndex, toIndex))
     }
     
+    /**
+    Follows an index through a series of delete, insert and move operations.
+    
+    :param: index: The index of the item to follow
+    :returns: A tuple representing the resulting index, and whether an alternative item has been given. The resulting index
+        may be nil if the item has been deleted, and there is no alternative to select. The isAlternative value will be set
+        to true if the next closest index has been returned.
+    */
     func followIndex(index: Int) -> (index: Int?, isAlternative: Bool?) {
         var newIndex = index
         let deleteOperations = operations.filter { $0.type == .Delete }
