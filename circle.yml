@@ -1,0 +1,8 @@
+machine:
+  environment:
+    LANG: en_US.UTF-8
+dependencies:
+  pre:
+    - sudo gem install cocoapods
+    - pod setup
+    - pod install

@@ -66,16 +66,6 @@
                ReferencedContainer = "container:TabBarSliderDemo.xcodeproj">
             </BuildableReference>
          </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "2749028A1ABC2E9800DB0FAB"
-               BuildableName = "TabBarSliderTests.xctest"
-               BlueprintName = "TabBarSliderTests"
-               ReferencedContainer = "container:TabBarSliderDemo.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
